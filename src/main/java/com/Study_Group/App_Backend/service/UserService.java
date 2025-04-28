@@ -21,8 +21,4 @@ public class UserService {
                 .map(user -> user.getPassword().equals(request.getPassword()))
                 .orElse(false);
     }
-
-    public Optional<User> findByUserId(String userId) {
-        return userRepository.findByUserId(userId);
-    }
 }

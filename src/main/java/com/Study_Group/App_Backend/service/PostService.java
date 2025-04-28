@@ -7,6 +7,8 @@ import com.Study_Group.App_Backend.repository.PostRepository;
 import com.Study_Group.App_Backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PostService {
 
@@ -29,5 +31,9 @@ public class PostService {
         post.setAuthor(user);
 
         postRepository.save(post);
+    }
+
+    public List<Post> getAllPosts() {
+        return postRepository.findAll();
     }
 }
