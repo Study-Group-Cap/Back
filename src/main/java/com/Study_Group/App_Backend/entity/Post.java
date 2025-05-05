@@ -16,9 +16,14 @@ public class Post {
 
     private String title;
     private String content;
-    private String type;
+
+    @Enumerated(EnumType.STRING)
+    private PostCategory category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User author;
+
+    @Enumerated(EnumType.STRING)
+    private PostStatus status = PostStatus.UNRESOLVED;
 }

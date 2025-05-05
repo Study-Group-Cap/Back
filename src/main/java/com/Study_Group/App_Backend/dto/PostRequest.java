@@ -1,5 +1,6 @@
 package com.Study_Group.App_Backend.dto;
 
+import com.Study_Group.App_Backend.entity.PostCategory;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,5 +8,5 @@ import lombok.Setter;
 public class PostRequest {
     private String title;
     private String content;
-    private String type;
+    private PostCategory category;
 }
