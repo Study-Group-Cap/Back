@@ -30,11 +30,14 @@ public class ChatMessageEntity {
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
+    @Column(name = "file_url")
+    private String fileUrl;
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private MessageType type;
 
     public enum MessageType {
-        CHAT, JOIN, LEAVE
+        CHAT, JOIN, LEAVE, FILE
     }
 }

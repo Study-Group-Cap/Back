@@ -22,6 +22,7 @@ public class ChatService {
         entity.setSender(message.getSender());
         entity.setContent(message.getContent());
         entity.setTimestamp(LocalDateTime.now());
+        entity.setFileUrl(message.getFileUrl());
         entity.setType(ChatMessageEntity.MessageType.valueOf(message.getType().name()));
 
         chatMessageRepository.save(entity);

@@ -9,11 +9,13 @@ public class ChatMessage {
     public enum MessageType {
         CHAT,
         JOIN,
-        LEAVE
+        LEAVE,
+        FILE
     }
 
     private MessageType type;
     private String roomId;
     private String sender;
     private String content;
+    private String fileUrl;
 }
