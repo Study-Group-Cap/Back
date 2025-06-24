@@ -1,50 +1,47 @@
 package com.Study_Group.App_Backend.controller;
 
-import com.Study_Group.App_Backend.dto.LoginRequest;
+import com.Study_Group.App_Backend.dto.NotificationResponse;
 import com.Study_Group.App_Backend.entity.User;
-import com.Study_Group.App_Backend.repository.UserRepository;
 import com.Study_Group.App_Backend.service.UserService;
-import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
 
-    public UserController(UserService userService, UserRepository userRepository) {
-        this.userService = userService;
-        this.userRepository = userRepository;
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> getMyInfo(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getUserById(userId));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request, HttpSession session) {
-        boolean result = userService.login(request);
-        if (result) {
-            session.setAttribute("userId", request.getUserId());
-            return ResponseEntity.ok("로그인 성공");
-        } else {
-            return ResponseEntity.status(401).body("아이디 또는 비밀번호가 틀렸습니다.");
-        }
+    @GetMapping("/{userId}/notifications")
+    public ResponseEntity<List<NotificationResponse>> getMyNotifications(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getMyNotificationsByUserId(userId));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpSession session) {
-        session.invalidate();
-        return ResponseEntity.ok("로그아웃 성공.");
-    }
+    @PatchMapping("/{userId}/profile-image")
+    public ResponseEntity<String> uploadProfileImage(@PathVariable Long userId,
+                                                     @RequestParam MultipartFile file) throws IOException {
+        String uploadPath = "uploads/profile/";
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
-    @GetMapping("me")
-    public ResponseEntity<User> getCurrentUser(HttpSession session) {
-        String userId = (String) session.getAttribute("userId");
-        if (userId == null) {
-            return ResponseEntity.status(401).build();
-        }
-        return userRepository.findByUserId(userId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(404).build());
+        File targetFile = new File(uploadPath + fileName);
+        targetFile.getParentFile().mkdirs();
+        file.transferTo(targetFile);
+
+        String imageUrl = "/static/" + fileName;
+        userService.updateProfileImage(userId, imageUrl);
+        return ResponseEntity.ok(imageUrl);
     }
 }
